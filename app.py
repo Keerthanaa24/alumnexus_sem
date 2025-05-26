@@ -619,7 +619,7 @@ def dashboard():
                 AND u.verified = 1
                 AND u.active = 1
                 AND u.role = 'Alumni'
-                AND (u.privacy = 'public' OR u.privacy IS NULL)
+                AND (u.privacy = 'public' OR u.privacy IS NULL)  -- Only public profiles
                 AND b.id IS NULL
                 AND u.id NOT IN (
                     SELECT CASE
@@ -778,11 +778,12 @@ def profile():
 
             # Get accepted connections
             connections = conn.execute("""
-                SELECT u.id, u.fullname, u.graduation_year, p.current_job, p.company 
+                SELECT u.id, u.fullname, u.graduation_year
                 FROM connection c
                 JOIN user u ON (c.sender_id = u.id OR c.receiver_id = u.id) AND u.id != ?
-                LEFT JOIN profile p ON u.id = p.user_id
-                WHERE (c.sender_id = ? OR c.receiver_id = ?) AND c.status = 'accepted'
+                WHERE (c.sender_id = ? OR c.receiver_id = ?) 
+                    AND c.status = 'accepted'
+                    AND u.privacy != 'private'
             """, (user['id'], user['id'], user['id'])).fetchall()
 
             return render_template('profile.html', 
@@ -1004,7 +1005,9 @@ def get_alumni():
             SELECT u.id, u.fullname, u.graduation_year, p.current_job, p.company 
             FROM user u
             LEFT JOIN profile p ON u.id = p.user_id
-            WHERE u.email != ? AND u.role = 'Alumni'
+            WHERE u.email != ? 
+            AND u.role = 'Alumni'
+            AND (u.privacy = 'public' OR u.privacy IS NULL)
         """
         params = [session["user"]]
         

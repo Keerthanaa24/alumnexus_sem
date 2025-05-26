@@ -818,7 +818,8 @@ def profile():
             success=False,
             message=f"Please fill all required fields: {', '.join(missing_fields)}"
         )
-
+    if not first_name.isalpha() or not last_name.isalpha():
+        return jsonify(success=False, message="Invalid data entry.")
     try:
         with get_db() as conn:
             row = conn.execute("SELECT * FROM user WHERE email = ?", (session_email,)).fetchone()

@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Posting</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='job_style.css') }}">
+
+
+
+</head>
+<body class="job-post-body">
+    <div class="job-post-container">
+        <header class="job-post-header">
+            <h1>Hiring? <span class="highlight">Share Your Job Postings Now!</span></h1>
+        </header><br>
+        <section class="job-posting-form">
+            <form id="jobForm" action="{{ url_for('job_post') }}" method="post">
+                <input type="text" name="title" id="jobTitle" placeholder="Job Title" required><br>
+                <input type="text" name="company" id="companyName" placeholder="Company Name" required><br>
+                <textarea name="description" id="jobDescription" placeholder="Job Description" required></textarea><br>
+                
+                <!-- Optional fields -->
+                <input type="text" name="location" id="jobLocation" placeholder="Job Location"><br>
+                <input type="text" name="experience" id="jobExperience" placeholder="Required Experience (years)"><br>
+                <input type="text" name="skills" id="jobSkills" placeholder="Required Skills"><br>
+                <select name="job_type" class="job-posting-form ">
+                    <option value="">Select Job Type</option>
+                    <option value="Full-time">Full-time</option>
+                    <option value="Part-time">Part-time</option>
+                    <option value="Internship">Internship</option>
+                    <option value="Freelance">Freelance</option>
+                </select>
+                <button type="submit">Post Job</button>
+            </form>
+        </section>
+        
+    </div>
+
+    <!-- Add this line to include your JavaScript -->
+    <script src="/static/job_script.js"></script>
+</body>
+</html>

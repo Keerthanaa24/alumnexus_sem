@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - Alumnexus</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin_style.css') }}">
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>Admin Dashboard</h2>
+        <ul>
+            <li><a href="{{ url_for('admin') }}">Dashboard</a></li>
+            <li><a href="{{ url_for('get_users') }}">Manage Users</a></li>
+            <li><a href="{{ url_for('jobp') }}">Job Management</a></li>
+            <li><a href="{{ url_for('events_admin') }}">Events</a></li>
+            <li><a href="{{ url_for('donation') }}">Donations</a></li>
+            <li><a href="{{ url_for('settings') }}" class="active">Settings</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header>
+            <h1>Settings</h1>
+        </header>
+
+        <section class="settings-container">
+            <!-- User Access Control -->
+            <div class="settings-card">
+                <h3>Pending Role Change Requests</h3>
+                {% if pending_requests %}
+                    <table class="requests-table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>Current Role</th>
+                                <th>Requested Role</th>
+                                <th>Request Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for req in pending_requests %}
+                            <tr>
+                                <td>{{ req.fullname }}</td>
+                                <td>{{ req.email }}</td>
+                                <td>{{ req.current_role }}</td>
+                                <td>{{ req.requested_role }}</td>
+                                <td>{{ req.requested_at }}</td>
+                                <td class="actions">
+                                    <form method="POST" action="{{ url_for('handle_role_change') }}">
+                                        <input type="hidden" name="request_id" value="{{ req.id }}">
+                                        <input type="hidden" name="role" value="{{ req.requested_role }}">
+                                        <button type="submit" name="action" value="approve" class="btn-approve">Approve</button>
+                                        <button type="submit" name="action" value="reject" class="btn-reject">Reject</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    <p class="no-requests">No pending role change requests.</p>
+                {% endif %}
+            </div>
+        </section>
+    </div>
+
+    <script src="{{ url_for('static', filename='admin_script.js') }}"></script>
+</body>
+</html>

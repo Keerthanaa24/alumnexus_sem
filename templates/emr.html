@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Management</title>
+    <style>
+        /* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background:url('/static/images/event.png')no-repeat center center/cover;
+    background-size: cover; /* Adjusts image to cover the screen */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    backdrop-filter: blur(15px);
+    padding: 0;
+   
+    color: white;
+}
+
+/* Header */
+header {
+    display: flex;
+    margin:auto;
+    justify-content:center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    color:#0a66c2;
+    height:15vh;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    color:#0a66c2;
+}
+
+#createEventBtn {
+    background: #0a66c2;
+    position: absolute;
+    right: 20px; 
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 5px;
+   }
+
+#createEventBtn:hover {
+    background:#0a66c2;
+}
+
+/* Search Bar */
+#eventSearch {
+    text-align: center;
+    margin: 20px;
+}
+
+#searchBar {
+    width: 80%;
+    max-width: 500px;
+    padding: 10px;
+    font-size: 1rem;
+    border-radius: 5px;
+    border: none;
+    outline: none;
+    border: 1px solid #0a66c2;
+
+}
+
+/* Event List */
+#eventList {
+    text-align: center;
+    padding: 20px;
+}
+
+#eventsContainer {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+/* Event Cards */
+.event-card {
+    background: white;
+    color: black;
+    width: 300px;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease-in-out;
+    border: 1px solid #0a66c2;
+
+}
+
+.event-card:hover {
+    transform: scale(1.05);
+}
+
+.event-card img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.event-info {
+    padding: 15px;
+}
+
+.event-details {
+    background: #0a66c2;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    margin-top: 20px;
+    cursor: pointer;
+    border-radius: 5px;
+    height:100%;
+}
+
+.event-details:hover {
+    background: green;
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    color: black;
+    padding: 20px;
+    border-radius: 10px;
+    width: 400px;
+    text-align: center;
+}
+
+.modal-content input,
+.modal-content textarea {
+    width: 90%;
+    margin: 10px 0;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.modal-content button {
+    background: #0a66c2;
+    color: white;
+    border: none;
+    padding: 10px;
+    width: 100%;
+    cursor: pointer;
+}
+
+.modal-content button:hover {
+    background: #8a2be2;
+}
+
+.close-btn {
+    color: red;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+#eventList h2 {
+    color: white; /* Change this to your desired color */
+    text-align: center;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+    -webkit-text-stroke: 2px #0a66c2; 
+}
+
+.notification {
+    position: relative;
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    color: white;
+    opacity: 1;
+    transition: opacity 0.5s ease;
+    width: 300px;
+}
+
+.notification.info {
+    background-color: #2196F3;
+}
+
+.notification.error {
+    background-color: #f44336;
+}
+
+.notification strong {
+    display: block;
+    font-size: 1.1em;
+    margin-bottom: 5px;
+}
+/* Add this to your emr_style.css */
+.notification {
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    color: white;
+    width: 300px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    transition: opacity 0.5s ease;
+}
+
+.notification.info {
+    background-color: #2196F3; /* Blue */
+}
+
+.notification.error {
+    background-color: #f44336; /* Red */
+}
+
+.notification.success {
+    background-color: #4CAF50; /* Green */
+}
+
+.notification.warning {
+    background-color: #ff9800; /* Orange */
+}
+
+.close-btn {
+    float: right;
+    cursor: pointer;
+    font-weight: bold;
+}
+#searchBar {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: 0.3s;
+}
+
+#searchBar:focus {
+    border-color: #4CAF50;
+    outline: none;
+}
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Events</h1>
+    </header>
+    <main>
+        <section id="eventSearch">
+            <input type="text" id="searchBar" placeholder="Search events...">           
+        </section>
+        <section id="eventList">
+            <h2>Upcoming Events</h2>
+            <div id="eventsContainer">
+                <!-- Event Cards Example -->              
+        </section>
+    </main>
+    <div id="eventModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn">&times;</span>
+            <h2>Create Event</h2>
+            <form id="eventForm">
+                <input type="text" id="eventName" placeholder="Event Name" required>
+                <input type="date" id="eventDate" required>
+                <input type="time" id="eventTime" required>
+                <input type="text" id="eventLocation" placeholder="Location" required>
+                <textarea id="eventDescription" placeholder="Event Description"></textarea>
+                <input type="file" id="eventImage" accept="image/*">
+                <button type="submit">Create Event</button>
+            </form>
+        </div>
+    </div>
+    <script src="/static/emr_script.js"></script>
+    
+</body>
+</html>

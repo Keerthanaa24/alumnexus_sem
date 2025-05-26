@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin_style.css') }}">
+    <script defer src="/static/admin_script.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> <!-- Chart.js for Analytics -->
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>Alumnexus</h2>
+        <ul>
+            <li><a href="{{ url_for('admin') }}" class="active">Dashboard</a></li>
+            <li><a href="{{ url_for('get_users') }}">Manage Users</a></li>
+            <li><a href="{{ url_for('jobp') }}">Job Management</a></li>
+            <li><a href="{{ url_for('events_admin') }}">Events</a></li>
+            <li><a href="{{ url_for('donation') }}">Donations</a></li>
+            <li><a href="{{ url_for('settings') }}">Settings</a></li>
+        </ul>
+        
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header>
+            <h1>Welcome Admin!!</h1>
+            <button id="logout">Logout
+
+                <script>
+                document.getElementById("logout").addEventListener("click", function() {
+                    fetch("/logout", {
+                        method: "POST",
+                    })
+                    .then(response => {
+                        window.location.href = "/login";  // Redirect to login page after successful logout
+                    })
+                    .catch(error => {
+                        console.error("Error logging out:", error);
+                    });
+                });
+                </script>
+            </button>
+        </header>
+
+        
+        <!-- Dashboard Cards -->
+        <section class="overview">
+            <div class="card">Total Users: <span id="totalUsers">{{ total_users }}</span></div>
+            <div class="card">Active Sessions: <span id="activeSessions">{{ active_sessions }}</span></div>
+            <div class="card">Total Donations: <span id="donationsCount">{{ donations_count }}</span></div>
+            <div class="card">Job Applications: <span id="jobApplicationsCount">{{ job_applications_count }}</span></div>
+            <div class="card">RSVPs for Events: <span id="rsvpCount">{{ rsvp_count }}</span></div>
+        </section>        
+
+        <!-- Website Analytics -->
+        <section class="analytics">
+            <h2>Website Analytics</h2>
+            <!-- Chart.js Graph -->
+            <canvas id="userChart"></canvas>
+        
+            <script>
+                // Chart.js: Display data for Total Users, Active Sessions, Job Applications, Donations, and RSVPs
+                var ctx = document.getElementById('userChart').getContext('2d');
+                
+                var chart = new Chart(ctx, {
+                    type: 'bar', // Change this to 'pie', 'line', etc., if you want a different chart style
+                    data: {
+                        labels: ['Total Users', 'Active Sessions', 'Job Applications', 'RSVPs for Events', 'Total Donations'],  // Labels for each category
+                        datasets: [{
+                            label: 'Website Metrics',
+                            data: [{{ total_users }}, {{ active_sessions }}, {{ job_applications_count }}, {{ rsvp_count }}, {{ donations_count }}],  // Data from Flask
+                            backgroundColor: [
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 99, 132, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 99, 132, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        scales: {
+                            y: {
+                                beginAtZero: true  // Ensure the y-axis starts at 0
+                            }
+                        }
+                    }
+                });
+            </script>
+        </section>
+    </div>
+
+</body>
+</html>

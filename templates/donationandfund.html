@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alumni Donations & Fundraising</title>
+    
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script defer src="/static/donationandfund_script.js"></script>
+    <style>
+        /* 🎨 Modern Elegant Styling for ALUMNEXUS Donations */
+:root {
+    --primary-blue: #0a1c74;
+    --secondary-blue: #4879c8;
+    --accent-teal: #087d8a;
+    --light-bg: #f8f5f0;
+    --success-green: #4CAF50;
+  }
+  
+  body {
+    font-family: 'Poppins', 'Segoe UI', sans-serif;
+    background: linear-gradient(rgba(255,255,255,0.9), rgba(255,255,255,0.9)), 
+                url('/static/images/don.png') no-repeat center center fixed;
+    background-size: cover;
+    color: #333;
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  header {
+    background: rgba(255, 255, 255, 0.95);
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  }
+  
+  header h1 {
+    color: var(--primary-blue);
+    font-size: 2.5rem;
+    margin: 0;
+    font-weight: 700;
+  }
+  
+  header p {
+    color: var(--accent-teal);
+    font-size: 1.2rem;
+    margin: 0.5rem 0 0;
+  }
+  
+  /* 🏆 Main Content Grid Layout */
+  .main-container {
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    gap: 2rem;
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    flex: 1;
+  }
+  
+  /* 🎗️ Campaign Cards Section */
+  .campaigns-section {
+    grid-column: 2;
+  }
+  
+  .donation-container1 {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    margin-bottom: 2rem;
+  }
+  
+  #campaigns {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+  }
+  
+  .campaign {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s, box-shadow 0.3s;
+  }
+  
+  .campaign:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+  }
+  
+  .campaign h3 {
+    color: var(--primary-blue);
+    margin-top: 0;
+    font-size: 1.3rem;
+  }
+  
+  .campaign p {
+    color: #555;
+    line-height: 1.5;
+  }
+  
+  progress {
+    width: 100%;
+    height: 8px;
+    border-radius: 4px;
+    margin: 1rem 0;
+  }
+  
+  progress::-webkit-progress-bar {
+    background-color: #e0e0e0;
+    border-radius: 4px;
+  }
+  
+  progress::-webkit-progress-value {
+    background-color: var(--accent-teal);
+    border-radius: 4px;
+  }
+  
+  /* 🏆 Sidebar Sections */
+  .sidebar-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  
+  .top-donors, .testimonials, .impact-container {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  }
+  
+  .top-donors h2, .testimonials h2 {
+    color: var(--primary-blue);
+    font-size: 1.3rem;
+    margin-top: 0;
+    border-bottom: 2px solid var(--light-bg);
+    padding-bottom: 0.5rem;
+  }
+  
+  .top-donors ul {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 0;
+  }
+  
+  .top-donors li {
+    background: #f0f8ff;
+    padding: 0.8rem;
+    margin: 0.5rem 0;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    font-weight: 500;
+  }
+  
+  .testimonial {
+    background: #f9f9f9;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-left: 3px solid var(--accent-teal);
+    border-radius: 0 6px 6px 0;
+  }
+  
+  .testimonial p {
+    margin: 0;
+    font-style: italic;
+  }
+  
+  .testimonial strong {
+    color: var(--primary-blue);
+  }
+  
+  .impact-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .impact-card {
+    background: white;
+    padding: 1.2rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    text-align: center;
+    transition: transform 0.3s;
+  }
+  
+  .impact-card:hover {
+    transform: translateY(-3px);
+  }
+  
+  .impact-card .icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+    color: var(--accent-teal);
+  }
+  
+  .impact-card h3 {
+    color: var(--accent-teal);
+    margin: 0.5rem 0;
+    font-size: 1.1rem;
+  }
+  
+  /* 🎭 Modal Styles */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    backdrop-filter: blur(3px);
+    justify-content: center;
+    align-items: center;
+  }
+  
+  .modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    animation: modalFadeIn 0.3s;
+  }
+  
+  @keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  .close {
+    position: absolute;
+    right: 1.5rem;
+    top: 1rem;
+    font-size: 1.5rem;
+    color: #888;
+    cursor: pointer;
+    transition: color 0.2s;
+  }
+  
+  .close:hover {
+    color: var(--primary-blue);
+  }
+  
+  .modal h2 {
+    color: var(--primary-blue);
+    margin-top: 0;
+  }
+  
+  /* 🔘 Form Elements */
+  input, textarea, select {
+    width: 100%;
+    padding: 0.8rem;
+    margin: 0.5rem 0 1rem;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-family: inherit;
+    font-size: 1rem;
+    transition: border-color 0.3s;
+  }
+  
+  input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--secondary-blue);
+  }
+  
+  /* 🚀 Buttons */
+  button {
+    background: var(--secondary-blue);
+    color: white;
+    padding: 0.8rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  button:hover {
+    background: var(--primary-blue);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+  
+  button:active {
+    transform: translateY(0);
+  }
+  
+  #proceedToPay {
+    background: var(--accent-teal);
+    width: 100%;
+  }
+  
+  #proceedToPay:hover {
+    background: #076974;
+  }
+  
+  /* ✅ Success Modal */
+  #successModal .modal-content {
+    text-align: center;
+    padding: 2.5rem;
+  }
+  
+  #successModal h2 {
+    color: var(--success-green);
+    margin-bottom: 1rem;
+  }
+  
+  #successMessage {
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* 🔍 Search Bar */
+  #searchBar {
+    padding: 0.8rem 1rem;
+    border: 1px solid #ddd;
+    border-radius: 30px;
+    width: 100%;
+    max-width: 400px;
+    margin: 1rem auto;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  
+  /* 📱 Responsive Design */
+  @media (max-width: 1024px) {
+    .main-container {
+      grid-template-columns: 1fr;
+      padding: 1rem;
+    }
+    
+    .sidebar-section {
+      grid-row: 1;
+      flex-direction: row;
+      flex-wrap: wrap;
+    }
+    
+    .top-donors, .testimonials, .impact-container {
+      flex: 1 1 300px;
+    }
+  }
+  
+  @media (max-width: 768px) {
+    header h1 {
+      font-size: 2rem;
+    }
+    
+    .modal-content {
+      width: 95%;
+      padding: 1.5rem;
+    }
+  }
+
+  .history-container {
+    margin: 2rem auto;
+    padding: 1rem;
+    max-width: 800px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.donation-record {
+    padding: 1rem;
+    margin: 0.5rem 0;
+    background: white;
+    border-radius: 4px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.donation-record .receipt-btn {
+    background: #4CAF50;
+    color: white;
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.donation-record .receipt-btn:hover {
+    background: #45a049;
+}
+
+.payment-cancelled {
+  background-color: #fff3cd;
+  border-left: 4px solid #ffc107;
+  padding: 10px;
+  margin-top: 15px;
+  border-radius: 4px;
+}
+
+.payment-cancelled p {
+  color: #856404;
+  margin: 0 0 10px 0;
+}
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Alumni Donations & Fundraising</h1>
+        <p>Empowering the next generation through your support</p>
+    </header>
+
+
+    <section class="impact-container">
+     <div class="impact-card">
+        <div class="icon">🎓</div>
+        <h3>100+ Scholarships</h3>
+        <p>Awarded in the past year</p>
+        <div class="icon">🔬</div>
+        <h3>5 Research Projects</h3>
+        <p>Funded with alumni support</p>
+        <div class="icon">🔗</div>
+        <h3>Networking & Legacy</h3>
+        <p>Stronger ties, opportunities & influence</p>
+     </div>
+     </section>
+     
+     <!-- 🗣️ Testimonials -->
+    <section class="testimonials">
+        <h2>What Our Donors Say</h2>
+        <div class="testimonial">
+            <p>"Giving back to my alma mater has been a rewarding experience!" – <strong>John Smith</strong></p>
+        </div>
+        <div class="testimonial">
+            <p>"My donation helped fund a research project that made a real impact." – <strong>Susan Brown</strong></p>
+        </div>
+    </section>
+    
+    <section class="donation-container1">
+        <h2>Start or Support a Fundraiser</h2>
+        <button id="openModal">Start a Fundraiser</button>
+        <input type="text" id="searchBar" placeholder="Search campaigns...">
+    </section>
+
+    <section id="campaigns">
+        <!-- Fundraising campaigns will be dynamically added here -->
+    </section>
+
+    <!-- Donation Modal -->
+    <div id="donationModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Create a Fundraising Campaign</h2>
+            <input type="text" id="campaignName" placeholder="Campaign Name">
+            <input type="number" id="targetAmount" placeholder="Target Amount (INR)">
+            <textarea id="campaignDescription" placeholder="Describe your cause..."></textarea>
+            <button id="createCampaign">Create Campaign</button>
+        </div>
+    </div>
+
+    <!-- Donation Payment Modal -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-payment">&times;</span>
+            <h2>Make a Donation</h2>
+            <div id="paymentCampaignInfo"></div>
+            <input type="number" id="donationAmount" placeholder="Amount (INR)" min="1">
+            <button id="proceedToPay">Proceed to Payment</button>
+            <div id="paymentStatus"></div>
+        </div>
+    </div>
+
+    <!-- Payment Success Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <h2>Payment Successful!</h2>
+            <p id="successMessage">Thank you for your donation.</p>
+            <button id="closeSuccess">Close</button>
+        </div>
+    </div>
+<!-- Donation History Section -->
+<section class="history-container">
+    <h2>Your Donation History</h2>
+    <div id="donationHistory">
+        <!-- Donation records will be loaded here -->
+    </div>
+</section>
+</body>
+</html>

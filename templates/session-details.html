@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session Details</title>
+   
+    <style>
+       body {
+    font-family: Arial, sans-serif;
+    background: url('/static/images/background_feed.png') no-repeat center center/cover;
+    text-align: center;
+    height: 150vh;
+    margin: 0;
+    padding: 0;
+}
+
+/* ✅ Ensures headings are clearly visible */
+h1, h2 {
+    color: white;  /* 🔥 Makes headings white */
+    font-weight: bold;
+}
+
+.container {
+    width: 80%;
+    margin: auto;
+    padding: 20px;
+}
+
+.chat-box {
+    width: 60%;
+    margin: auto;
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    padding: 15px;
+    background: rgba(255, 255, 255, 0.9);
+}
+
+.chat-messages {
+    height: 300px;
+    overflow-y: auto;
+    border-bottom: 1px solid #ccc;
+    margin-bottom: 10px;
+    padding: 10px;
+    text-align: left;
+}
+
+#chatInput {
+    width: 80%;
+    padding: 10px;
+}
+
+/* ✅ Fix button styling */
+button {
+    padding: 10px;
+    margin-top: 30px;
+    cursor: pointer;
+    background-color: #0052cc;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+/* ✅ Makes "Back to Mentorship" link white */
+a {
+    color: white;  /* 🔥 Ensures visibility on dark background */
+    text-decoration: underline;
+}
+
+a:hover {
+    color: lightgray; /* Subtle hover effect */
+}
+/* Video Call Section */
+.video-call-container {
+    margin: 25px auto;
+    padding: 20px;
+    background: rgba(0, 82, 204, 0.1);
+    border: 2px solid #0052cc;
+    border-radius: 10px;
+    max-width: 600px;
+}
+
+.video-call-container h3 {
+    color: white;
+    margin-bottom: 15px;
+}
+
+#meet-frame {
+    width: 100%;
+    height: 400px;
+    background: #000;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+#meet-link {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin: 10px 0;
+    word-break: break-all;
+    color: #333;
+    text-align: center;
+}
+
+/* Role-specific buttons */
+.button-mentor {
+    background-color: #28a745; /* Green for mentor actions */
+}
+
+.button-student {
+    background-color: #17a2b8; /* Teal for student actions */
+}
+
+/* Session status indicators */
+.session-status {
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.session-pending {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.session-active {
+    background-color: #28a745;
+    color: white;
+}
+
+.session-completed {
+    background-color: #6c757d;
+    color: white;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .chat-box, .video-call-container {
+        width: 90%;
+    }
+    
+    #meet-frame {
+        height: 300px;
+    }
+}
+
+/* Animation for call buttons */
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+
+.video-call-btn {
+    animation: pulse 2s infinite;
+}
+
+.video-call-btn:hover {
+    animation: none;
+    transform: scale(1.05);
+}
+
+/* Add these styles */
+.button-mentor {
+    background-color: #28a745; /* Green for mentor */
+}
+
+.button-student {
+    background-color: #17a2b8; /* Blue for student */
+}
+
+.meet-link-container {
+    background: rgba(255, 255, 255, 0.9);
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px auto;
+    max-width: 500px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.meet-link-container input {
+    flex-grow: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    min-width: 200px;
+}
+
+.meet-link-container button {
+    padding: 8px 15px;
+    background: #0052cc;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.join-btn {
+    padding: 8px 15px;
+    background: #28a745;
+    color: white;
+    text-decoration: none;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.session-status {
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.session-pending {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.session-active {
+    background-color: #28a745;
+    color: white;
+}
+
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Mentorship Session Details</h1>
+        <div id="mentor-details">
+            <h2>Mentor: <span id="mentorName">{{ mentor_name }}</span></h2>
+            <div id="sessionStatus" class="session-status">
+                {% if session_started %}
+                Session in Progress
+                {% else %}
+                {% if user_role == 'Alumni' %}
+                Session Not Started
+                {% else %}
+                Waiting for Mentor to Start Session
+                {% endif %}
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Chat Box -->
+        <div class="chat-box">
+            <h3>Live Chat</h3>
+            <div class="chat-messages" id="chatMessages"></div>
+            <input type="text" id="chatInput" placeholder="Type your message...">
+            <button onclick="postChatMessage()">Send</button>
+        </div>
+
+        <!-- Session Control Buttons -->
+        {% if user_role == 'Alumni' %}
+        {% if not session_started and not meet_link %}
+        <button id="sessionControlBtn" class="button-mentor" onclick="startSession()">Start Session</button>
+        {% endif %}
+        {% endif %}
+
+        <a href="/feedback?mentor={{ mentor_name }}">
+            <button class="feedback-btn">Give Feedback</button>
+        </a>
+        
+        <a href="/mentorship" class="back-btn">Back to Mentorship</a>
+
+        <!-- Meet Link Section (only for Alumni) -->
+        {% if user_role == 'Alumni' %}
+        <div id="meetLinkContainer" {% if session_started or meet_link %}style="display: none;" {% else
+            %}style="display: block;" {% endif %}>
+            <h3>Paste the Meet Link Below:</h3>
+            <input type="text" id="meetLinkInput" placeholder="Paste the Google Meet link here">
+            <button onclick="submitMeetLink()" {% if session_started %}disabled{% endif %}>Submit Meet Link</button>
+        </div>
+
+        <!-- Display Meet Link -->
+
+        {% endif %}
+        <div id="meetLinkDisplayContainer" style="display: {% if meet_link %}block{% else %}none{% endif %};">
+            <h2>Your Meeting Link:</h2>
+            <div id="meetLinkDisplay"><a href="{{ meet_link }}" target="_blank">{{ meet_link }}</a></div>
+        </div>
+    </div>
+
+    <script>
+
+        function postChatMessage() {
+            const input = document.getElementById('chatInput');
+            const content = input.value.trim();
+            if (!content) return;
+
+            fetch('/send_message', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                credentials: 'include',
+                body: JSON.stringify({
+                    session_id: {{ session_id }},
+                content: content
+            })
+        })
+        .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    input.value = '';
+                    fetchMessages(); // Refresh chat
+                } else {
+                    alert("Message failed to send.");
+                }
+            });
+    }
+
+    function fetchMessages() {
+    fetch(`/get_messages/{{ session_id }}`, {
+        credentials: 'include'
+    })
+    .then(res => res.json())
+    .then(data => {
+        const chatBox = document.getElementById('chatMessages');
+        chatBox.innerHTML = '';
+        data.messages.forEach(msg => {
+            const msgDiv = document.createElement('div');
+            msgDiv.classList.add('chat-message');
+            if (msg.role === 'alumni') {
+                msgDiv.classList.add('alumni-message');
+                msgDiv.innerHTML = `<strong>${msg.user} (Alumni):</strong> ${msg.content}`;
+            } else {
+                msgDiv.classList.add('student-message');
+                msgDiv.innerHTML = `<strong>${msg.user}:</strong> ${msg.content}`;
+            }
+            chatBox.appendChild(msgDiv);
+        });
+        chatBox.scrollTop = chatBox.scrollHeight; // Auto scroll to bottom
+    });
+}
+
+
+        // Auto-refresh messages every 5 seconds
+        setInterval(fetchMessages, 1000);
+        window.onload = fetchMessages;
+
+        function startSession() {
+            // Open Google Meet in a new tab for alumni to generate the link
+            window.open("https://meet.google.com/new", "_blank");
+
+            // After the alumni generates a link on Google Meet, they can paste it into the input box on the page.
+            document.getElementById('meetLinkContainer').style.display = 'block';
+            document.getElementById('sessionControlBtn').style.display = 'none'; // Hide Start Session button after pressing
+        }
+
+        function submitMeetLink() {
+            const meetLink = document.getElementById('meetLinkInput').value;
+
+            if (meetLink) {
+                // Send the meet link to the backend for saving in the database
+                fetch(`/save_meet_link/{{ session_id }}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ meet_link: meetLink }),
+                    credentials: 'include'
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Display the meet link in large text after it's submitted
+                            document.getElementById('meetLinkDisplay').textContent = meetLink;
+                            document.getElementById('meetLinkContainer').style.display = 'none'; // Hide the meet link input
+                            document.getElementById('meetLinkDisplayContainer').style.display = 'block'; // Show the large meet link
+                            document.getElementById('sessionStatus').textContent = "Session in Progress"; // Update session status
+
+                            // Inform the student page to refresh (if necessary)
+                            window.location.reload();  // Reload page to update meet link on student side
+                        } else {
+                            alert('Error saving meeting link');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        alert('Error saving meeting link');
+                    });
+            } else {
+                alert('Please paste the meeting link first');
+            }
+        }
+
+
+    </script>
+
+</body>
+
+</html>

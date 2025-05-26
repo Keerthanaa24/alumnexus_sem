@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alumni Messaging</title>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background: url('alumnet.png') no-repeat center center/cover;
+    background-size: cover;
+    background-position: center;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f7fc;
+}
+
+.messaging-container {
+    display: flex;
+    border: 1px solid #0a66c2;
+    width: 90%;
+    height: 90vh;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Improved shadow */
+    border-radius: 12px;
+    overflow: hidden;
+    background: white;
+}
+
+/* Sidebar */
+.sidebar {
+    width: 25%;
+    background-color: white;
+    padding: 20px;
+    border-right: 1px solid #ddd;
+}
+
+.sidebar h2 {
+    margin-bottom: 15px;
+    font-size: 20px;
+    font-weight: bold;
+    background-color:white;
+}
+
+.search-bar {
+    width: 90%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    outline: none;
+    transition: 0.3s;
+}
+
+.search-bar:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 6px rgba(0, 123, 255, 0.3);
+}
+
+.chat-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background-color:white;
+}
+
+.chat-item {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    cursor: pointer;
+    transition: 0.3s;
+    border-radius: 8px;
+}
+
+.chat-item:hover, .chat-item.active {
+    background-color: white;
+}
+
+.chat-item img {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    margin-right: 12px;
+     border: 1px solid #0a66c2;
+}
+
+.chat-info {
+    flex-grow: 1;
+}
+
+.time {
+    font-size: 0.8em;
+    color: gray;
+}
+
+/* Chat Window */
+.chat-window {
+    flex-grow: 2;
+    display: flex;
+    flex-direction: column;
+    background-color: #fff;
+    padding: 20px;
+}
+
+.chat-header {
+    display: flex;
+    align-items: center;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 12px;
+}
+
+.chat-header img {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    margin-right: 12px;
+    border: 1px solid #0a66c2;
+}
+
+.chat-messages {
+    flex-grow: 1;
+    padding: 12px;
+    overflow-y: auto;
+    scrollbar-width: thin;
+}
+
+.message {
+    max-width: 65%;
+    padding: 12px;
+    border-radius: 10px;
+    margin: 5px 0;
+    font-size: 14px;
+}
+
+.received {
+    background-color: #f1f1f1;
+    align-self: flex-start;
+}
+
+.sent {
+    background-color: #f1f1f1;
+    color: #0a66c2;
+    align-self: flex-end;
+}
+
+.chat-input {
+    display: flex;
+    border-top: 1px solid #ddd;
+    padding: 12px;
+}
+
+.chat-input input {
+    flex-grow: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    outline: none;
+    transition: 0.3s;
+    gap:10px;
+    margin-right: 10px; 
+}
+
+.chat-input input:focus {
+    border-color: white;
+    margin-right: 10px; 
+}
+
+.chat-input button {
+    background-color: #0a66c2;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin-right:-10px;
+    gap:10px;
+}
+
+.chat-input button:hover {
+    background-color: white;
+    margin-right:-10px;
+}
+
+/* User Profile */
+.user-profile {
+    width: 25%;
+    background-color: #fff;
+    padding: 20px;
+    border-left: 1px solid #ddd;
+    text-align: center;
+}
+
+.user-profile img {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    margin-bottom: 12px;
+    border: 1px solid #0a66c2;
+}
+
+.user-profile h3 {
+    margin: 8px 0;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.user-profile p {
+    font-size: 0.9em;
+    color: gray;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .messaging-container {
+        flex-direction: column;
+        width: 85%;
+        height: 100vh;
+    }
+
+    .sidebar, .user-profile {
+        width: 100%;
+        border: none;
+        padding: 15px;
+    }
+
+    .chat-window {
+        padding: 15px;
+    }
+
+    .chat-item {
+        padding: 8px;
+    }
+}
+    </style>
+</head>
+<body>
+    <div class="messaging-container">
+        <!-- Sidebar for Conversations -->
+        <div class="sidebar">
+            <h2>Conversations</h2>
+            <input type="text" placeholder="Search here..." class="search-bar">
+            <ul class="chat-list" id="chatList">
+                <!-- Conversations will be loaded dynamically -->
+            </ul>
+        </div>
+        
+        <!-- Chat Window -->
+        <div class="chat-window">
+            <div class="chat-header">
+                <img src="/static/images/pro.png" alt="User">
+                <div>
+                    <h3 id="alumni-name">Select a conversation</h3>
+                    <p id="online-status">Offline</p>
+                </div>
+            </div>
+            <div class="chat-messages" id="chatMessages">
+                <!-- Messages will appear here -->
+            </div>
+            <div class="chat-input">
+                <input type="text" placeholder="Type a message..." id="messageInput">
+                <button id="sendButton">Send</button>
+            </div>
+        </div>
+        
+        <!-- User Profile Section -->
+        <div class="user-profile">
+            <img src="/static/images/pro.png" alt="User">
+            <h3 id="alumni-profile-name">Select a conversation</h3>
+            <p id="alumni-email">Email will appear here</p>
+        </div>
+    </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", async function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const alumniName = urlParams.get("name");
+            const alumniId = urlParams.get("id");
+            
+            // Load conversations
+            await loadConversations();
+            
+            // If name and ID are in URL, load that chat
+            if (alumniName && alumniId) {
+                await loadChat(alumniId, alumniName);
+            }
+            
+            // Set up send button
+            document.getElementById("sendButton").addEventListener("click", sendMessage);
+            document.getElementById("messageInput").addEventListener("keypress", function(e) {
+                if (e.key === 'Enter') sendMessage();
+            });
+        });
+        
+        async function loadConversations() {
+            try {
+                const response = await fetch('/api/get_conversations');
+                if (!response.ok) throw new Error('Failed to load conversations');
+                const conversations = await response.json();
+                
+                const chatList = document.getElementById("chatList");
+                chatList.innerHTML = '';
+                
+                conversations.forEach(conversation => {
+                    const li = document.createElement("li");
+                    li.className = "chat-item";
+                    li.innerHTML = `
+                        <img src="/static/images/pro.png" alt="Alumni">
+                        <div class="chat-info">
+                            <h4>${conversation.fullname}</h4>
+                            <p>${conversation.last_message || 'No messages yet'}</p>
+                        </div>
+                    `;
+                    li.addEventListener('click', () => loadChat(conversation.id, conversation.fullname));
+                    chatList.appendChild(li);
+                });
+            } catch (error) {
+                console.error('Error loading conversations:', error);
+            }
+        }
+        
+        async function loadChat(userId, userName) {
+            try {
+                // Update UI
+                document.getElementById("alumni-name").textContent = userName;
+                document.getElementById("alumni-profile-name").textContent = userName;
+                document.getElementById("online-status").textContent = "Online";
+                
+                // Get user details
+                const userResponse = await fetch(`/api/get_user_details?id=${userId}`);
+                if (!userResponse.ok) throw new Error('Failed to load user details');
+                const userDetails = await userResponse.json();
+                
+                document.getElementById("alumni-email").textContent = userDetails.email;
+                
+                // Load messages
+                const messagesResponse = await fetch(`/api/get_messages?other_user_id=${userId}`);
+                if (!messagesResponse.ok) throw new Error('Failed to load messages');
+                const messages = await messagesResponse.json();
+                
+                const chatMessages = document.getElementById("chatMessages");
+                chatMessages.innerHTML = '';
+                
+                messages.forEach(msg => {
+                    const messageDiv = document.createElement("div");
+                    messageDiv.className = `message ${msg.is_sender ? 'sent' : 'received'}`;
+                    messageDiv.innerHTML = `
+                        <p>${msg.content}</p>
+                        <span>${new Date(msg.timestamp).toLocaleTimeString()}</span>
+                    `;
+                    chatMessages.appendChild(messageDiv);
+                });
+                
+                // Scroll to bottom
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                
+                // Store current chat info
+                window.currentChat = { userId, userName };
+                
+            } catch (error) {
+                console.error('Error loading chat:', error);
+            }
+        }
+        
+        async function sendMessage() {
+            if (!window.currentChat) return;
+            
+            const input = document.getElementById("messageInput");
+            const message = input.value.trim();
+            if (!message) return;
+            
+            try {
+                const response = await fetch('/api/send_message', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        receiver_id: window.currentChat.userId,
+                        content: message
+                    })
+                });
+                
+                if (!response.ok) throw new Error('Failed to send message');
+                
+                input.value = '';
+                await loadChat(window.currentChat.userId, window.currentChat.userName);
+                
+            } catch (error) {
+                console.error('Error sending message:', error);
+                alert('Failed to send message');
+            }
+        }
+    </script>
+</body>
+</html>

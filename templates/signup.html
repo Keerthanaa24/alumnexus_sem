@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <style>
+        body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: url('https://img.freepik.com/premium-photo/graduated-students-illustration-ai-generativexa_118124-18292.jpg?w=900') no-repeat center center/cover;
+    font-family: Arial, sans-serif;
+}
+
+/* Signup Form Container */
+.signup-container {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 25px;
+    border-radius: 12px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    width: 380px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Title Styling */
+h2 {
+    color: white;
+    font-size: 24px;
+    margin-bottom: 15px;
+}
+
+/* Input Fields */
+input, select {
+    width: 90%; /* Reduced width to leave space on the right */
+    padding: 12px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.9);
+    text-align: left;
+    font-size: 16px;
+}
+
+/* Button Styling */
+button {
+    width: 90%;
+    padding: 12px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/* Signup Button */
+.signup-btn {
+    background-color: #0052cc;
+    color: white;
+    transition: background 0.3s ease-in-out;
+}
+
+/* Responsive Fix */
+@media screen and (max-width: 450px) {
+    .signup-container {
+        width: 90%;
+        padding: 20px;
+    }
+}
+
+    </style>
+</head>
+<body>
+    <div class="signup-container">
+        <h2>Sign Up</h2>
+        <form id="signup-form">
+            <input type="text" id="fullname" name="fullname" placeholder="Full Name" class="cont" required>
+            <input type="email" id="email" name="email" placeholder="Email Address" class="cont" required>
+            <input type="password" id="password" name="password" placeholder="Password" class="cont" required>
+            <input type="password" id="confirm-password" name="confirm-password" placeholder="Confirm Password" class="cont" required>
+
+            <!-- Role Selection Dropdown -->
+            <div class="role-container">
+                <select id="role" name="role" class="cont" required>
+                    <option value="" disabled selected>Select Role</option>
+                    <option value="Alumni">Alumni</option>
+                    <option value="Student">Student</option>
+                    <option value="Recruiter">Recruiter</option>
+                    <option value="Admin">Admin</option>
+                </select>
+            </div>
+
+            <!-- Graduation Year Dropdown (Hidden by Default) -->
+            <div class="role-container" id="graduation-container" style="display: none;">
+                <select id="graduation-year" name="graduation-year" class="cont">
+                    <option value="" disabled selected>Select Graduation Year</option>
+                </select>
+            </div>
+
+            <button type="submit" class="signup-btn">Sign Up</button>
+        </form>
+    </div>
+
+    <!-- JavaScript for Password Match, Graduation Year, and Redirect -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let signupForm = document.getElementById("signup-form");
+            let roleSelect = document.getElementById("role");
+            let graduationYearSelect = document.getElementById("graduation-year");
+            let graduationContainer = document.getElementById("graduation-container");
+
+            // Populate Graduation Year Dropdown
+            for (let i = 2030; i >= 1980; i--) {
+                let option = document.createElement("option");
+                option.value = i;
+                option.textContent = i;
+                graduationYearSelect.appendChild(option);
+            }
+
+            // Show/hide Graduation Year based on role selection
+            roleSelect.addEventListener("change", function () {
+                if (this.value === "Alumni" || this.value === "Student") {
+                    graduationContainer.style.display = "block";
+                    graduationYearSelect.setAttribute("required", "true");
+                } else {
+                    graduationContainer.style.display = "none";
+                    graduationYearSelect.removeAttribute("required");
+                }
+            });
+
+            // Form validation and AJAX submission
+            signupForm.addEventListener("submit", async function (event) {
+                event.preventDefault(); // Prevent form submission
+
+                let fullname = document.getElementById("fullname").value;
+                let email = document.getElementById("email").value;
+                let password = document.getElementById("password").value;
+                let confirmPassword = document.getElementById("confirm-password").value;
+                let role = roleSelect.value;
+                let graduationYear = graduationYearSelect.value;
+
+                if (!role) {
+                    alert("Please select a role.");
+                    return;
+                }
+
+                if (password !== confirmPassword) {
+                    alert("Password and Confirm Password do not match!");
+                    return;
+                }
+
+                // Prepare data to send
+                let signupData = {
+                    fullname: fullname,
+                    email: email,
+                    password: password,
+                    role: role,
+                    graduation_year: (role === "Alumni" || role === "Student") ? graduationYear : null
+                };
+
+                try {
+                    let response = await fetch("/signup", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(signupData),
+                    });
+
+                    let result = await response.json();
+
+                    if (result.success) {
+                        alert("Signed up successfully! Redirecting to login page.");
+                        window.location.href = result.redirect; // Redirect to login
+                    } else {
+                        alert(result.message || "Signup failed. Please try again.");
+                    }
+                } catch (error) {
+                    console.error("Signup error:", error);
+                    alert("An error occurred. Please try again.");
+                }
+            });
+        });
+    </script>
+</body>
+</html>

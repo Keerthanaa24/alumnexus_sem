@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Application</title>
+    <link rel="stylesheet" href="/static/job_style.css">
+</head>
+<body>
+    <section class="job-openings">
+        <h2>Current Job Openings</h2>
+        <div class="carousel-wrapper">
+            <button class="carousel-btn prev" onclick="moveSlide(-1)">&#10094;</button>
+            <div id="job-listings" class="carousel-container">
+                {% for job in jobs %}
+                <div class="job-card">
+                    <h3>{{ job.title }}</h3>
+                    <p><strong>Company:</strong> {{ job.company }}</p>
+                    <p>{{ job.description }}</p>
+                    <p><strong>Experience:</strong> {{ job.experience }}</p>
+                    <p><strong>Skills:</strong> {{ job.skills }}</p>
+                    <p><strong>Job Type:</strong> {{ job.job_type }}</p>
+                    <a class="apply-btn" href="/job_details/{{ job.id }}">Apply Now</a>
+                </div>
+                {% else %}
+                <p>No job openings available.</p>
+                {% endfor %}
+            </div>
+            <button class="next" onclick="moveSlide(1)">&#10095;</button>
+        </div>
+        {% if session.get('alert') == 'fill' %}
+            <div class="alert alert-danger">Please fill in all required fields.</div>
+        {% elif session.get('alert') == 'duplicate' %}
+            <div class="alert alert-warning">You have already applied for this job.</div>
+        {% elif session.get('alert') == 'success' %}
+            <div class="alert alert-success">Application submitted successfully!</div>
+        {% endif %}
+        {% with _ = session.pop('alert', None) %}{% endwith %}
+
+    </section>
+
+    <section class="hero">
+        <h1>Find the job that is <span class="highlight">perfect for You</span></h1>
+        <form class="search-bar" action="/search" method="get">
+            <input type="text" name="q" placeholder="Skills, Companies or Job title" value="{{ request.args.get('q', '') }}">
+        
+            <select name="exp">
+                <option value="">Select Experience</option>
+                <option value="Fresher" {% if request.args.get('exp') == 'Fresher' %} selected {% endif %}>Fresher</option>
+                <option value="1-2 Years" {% if request.args.get('exp') == '1-2 Years' %} selected {% endif %}>1-2 Years</option>
+                <option value="3-5 Years" {% if request.args.get('exp') == '3-5 Years' %} selected {% endif %}>3-5 Years</option>
+                <option value="6+ Years" {% if request.args.get('exp') == '6+ Years' %} selected {% endif %}>6+ Years</option>
+            </select>
+        
+            <input type="text" name="loc" placeholder="Enter Location" value="{{ request.args.get('loc', '') }}">
+        
+            <br><br>
+            <div class="search-button-wrapper">
+                <button type="submit" class="search-btn">Search</button>
+            </div>
+        </form>
+    </section>
+    
+    <br><br>
+
+    <section class="popular-searches">
+        <div class="search-left">
+            <h2>Popular Searches</h2>
+        </div>
+        <div class="search-right">
+            <button>Freshers</button>
+            <button>Freelancer</button>
+            <button>Engineering</button>
+            <button>Digital Marketing</button>
+            <button>Accounting</button>
+            <button>IT</button>
+            <button>HR Executive</button>
+            <button>Management</button>
+            <button>Sales</button>
+            <button>Work From Home</button>
+            <button>Software Engineer</button>
+        </div>
+    </section>
+    <br><br>
+
+    <section class="employers">
+        <h2>Employers of Choice</h2>
+        <div class="company-logos">
+            <img src="/static/images/google.png" alt="Google">
+            <img src="/static/images/microsoft.png" alt="Microsoft">
+            <img src="/static/images/intel.png" alt="Intel">
+            <img src="/static/images/tata.png" alt="TATA Digital">
+            <img src="/static/images/infosys.png" alt="Infosys">
+            <img src="/static/images/meta.png" alt="Meta">
+        </div>
+    </section>
+
+    <script>
+        function moveSlide(direction) {
+            const carousel = document.getElementById('job-listings');
+            const scrollAmount = 300; // adjust based on job card width
+            carousel.scrollBy({
+                left: direction * scrollAmount,
+                behavior: 'smooth'
+            });
+        }
+    
+        // Optional: Touch swipe support
+        let startX;
+        let scrollLeft;
+        const carousel = document.getElementById('job-listings');
+    
+        carousel.addEventListener('touchstart', (e) => {
+            startX = e.touches[0].pageX;
+            scrollLeft = carousel.scrollLeft;
+        });
+    
+        carousel.addEventListener('touchmove', (e) => {
+            const x = e.touches[0].pageX;
+            const walk = startX - x;
+            carousel.scrollLeft = scrollLeft + walk;
+        });
+    </script>
+    
+</body>
+</html>

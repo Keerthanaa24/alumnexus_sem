@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ event.title }}</title>
+    <style>
+        /* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background:url('/static/images/event.png')no-repeat center center/cover;
+    background-size: cover; /* Adjusts image to cover the screen */
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    backdrop-filter: blur(10px);
+    padding: 0;
+    color: white;
+}
+
+/* Header */
+header {
+    display: flex;
+    margin: auto;
+    justify-content: center;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    color: #0a66c2;
+    height: 15vh;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: white;
+}
+
+/* Invitation Container */
+.invitation-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+/* Invitation Card */
+.invitation-card {
+    background-color:white;
+    color: #0a66c2;
+    width: 400px;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    border: 1px solid #0a66c2;
+}
+
+.invitation-card h2 {
+    color: #0a66c2;
+    margin-bottom: 10px;
+}
+
+.invitation-card img {
+    width: 100%;
+    height: 200px;
+    border-radius: 10px;
+    object-fit: cover;
+}
+
+.invitation-card p {
+    font-size: 16px;
+    margin: 10px 0;
+}
+
+/* Buttons */
+.event-details {
+    background: #0a66c2;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    margin-top: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    width: 100%;
+    font-size: 16px;
+}
+
+.event-details:hover {
+    background: green;
+}
+
+.back-btn {
+    background:#0a66c2;
+}
+
+.back-btn:hover {
+    background: green;
+}
+
+    </style>
+</head>
+<body>
+    <main class="invitation-container">
+        <div class="invitation-card">
+            <h2 id="eventTitle">{{ event.title }}</h2>
+            <img id="eventImage" src="{{ url_for('static', filename='images/' + event.image) }}" alt="Event Image">
+            <p><strong>📅 Date:</strong> {{ event.date }}</p>
+            <p><strong>📍 Location:</strong> {{ event.location }}</p>
+            <p id="eventDescription">{{ event.description }}</p>
+
+            {% if already_rsvped %}
+                <button class="event-details" disabled>Already RSVP'd</button>
+            {% else %}
+                <button class="event-details" id="rsvpBtn">RSVP Now</button>
+            {% endif %}
+            <button class="event-details back-btn" onclick="window.history.back()">Go Back</button>
+        </div>
+    </main>
+
+    <script>
+        document.getElementById('rsvpBtn')?.addEventListener('click', async () => {
+            const response = await fetch('/api/rsvp', {
+                method: 'POST',
+                credentials: 'include',  // 👈 This is CRUCIAL
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    event_id: "{{ event_id }}"
+                })
+            });
+            
+            if (!response.ok) {
+                const error = await response.json();
+                alert(error.error);
+                if (response.status === 401) {
+                    window.location.href = "/login";  // Redirect to login
+                }
+                return;
+            }
+            
+            const result = await response.json();
+            alert(result.message);
+            window.location.reload();
+        });
+        </script>
+</body>
+</html>

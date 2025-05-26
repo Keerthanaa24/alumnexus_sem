@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Postings</title>
+    <link rel="stylesheet" href="/static/admin_style.css">
+    <script defer src="/static/admin_script.js"></script>
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>Admin Dashboard</h2>
+        <ul>
+            <li><a href="{{ url_for('admin') }}" >Dashboard</a></li>
+            <li><a href="{{ url_for('get_users') }}">Manage Users</a></li>
+            <li><a href="{{ url_for('jobp') }}" class="active">Job Management</a></li>
+            <li><a href="{{ url_for('events_admin') }}">Events</a></li>
+            <li><a href="{{ url_for('donation') }}">Donations</a></li>
+            <li><a href="{{ url_for('settings') }}">Settings</a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <header>
+            <h1>Job Management</h1>
+        </header>
+
+        <!-- View Job Postings -->
+        <section>
+            <h2>Job Postings</h2>
+            <table id="jobTable">
+                <thead>
+                    <tr>
+                        <th>Job Title</th>
+                        <th>Company</th>
+                        <th>Location</th>
+                        <th>Posted By</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="jobListings">
+                    <!-- Job postings will be loaded dynamically -->
+                </tbody>
+            </table>
+        </section>
+
+        <!-- View Job Applications -->
+        <section>
+            <h2>Job Applications</h2>
+            <table id="applicationTable">
+                <thead>
+                    <tr>
+                        <th>Applicant Name</th>
+                        <th>Email</th>
+                        <th>Applied Job</th>
+                    </tr>
+                </thead>
+                <tbody id="applicationList">
+                    <!-- Applications will be loaded dynamically -->
+                </tbody>
+            </table>
+        </section>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Portal</title>
+    <link rel="stylesheet" href="/static/job_style.css">
+    <style>
+        /* Flash message styling */
+        .flash {
+            padding: 10px;
+            margin: 15px auto;
+            width: 80%;
+            border-radius: 5px;
+            font-weight: bold;
+            text-align: center;
+        }
+        .flash-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .flash-danger {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .flash-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        /* Popup styling */
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            display: none;
+        }
+        .popup-content {
+            text-align: center;
+        }
+        .popup-close {
+            position: absolute;
+            top: 5px;
+            right: 10px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 999;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Hire or Get Hired!!</h1>
+    </header>
+
+    <div class="container11">
+        <!-- ✅ Flash message section -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="flash flash-{{ category }}">
+                {{ message }}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <!-- Job action buttons -->
+        <button onclick="checkRoleAndPostJob()">Post a Job</button>
+        <button onclick="goToApplyJob()">Apply for a Job</button>
+    </div>
+
+    <!-- Popup structure -->
+    <div class="overlay" id="overlay"></div>
+    <div class="popup" id="popup">
+        <span class="popup-close" onclick="closePopup()">&times;</span>
+        <div class="popup-content" id="popupContent">
+            <!-- Popup content will be inserted here -->
+        </div>
+    </div>
+
+    <script>
+        function checkRoleAndPostJob() {
+            // First check if user is logged in
+            fetch('/api/check_role')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.role === 'recruiter') {
+                        window.location.href = "/job_post";
+                    } else {
+                        showPopup("Access denied: You must be a recruiter to post jobs.");
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking role:', error);
+                    showPopup("Error checking your permissions. Please try again.");
+                });
+        }
+
+        function goToApplyJob() {
+            window.location.href = "/job_apply";
+        }
+
+        function showPopup(message) {
+            document.getElementById('popupContent').textContent = message;
+            document.getElementById('popup').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+    </script>
+</body>
+</html>

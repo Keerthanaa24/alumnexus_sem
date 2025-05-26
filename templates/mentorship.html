@@ -1,0 +1,84 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mentorship Program</title>
+    <link rel="stylesheet" href="/static/mentorship_style.css">
+</head>
+<body>
+
+    <div class="hero">
+        <h1>Find a Mentor to Boost Your Career</h1>
+        <p>Search for verified, public alumni mentors open for sessions.</p>
+
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search mentors...">
+        </div>
+    </div>
+
+    <div class="mentor-list" id="mentorContainer">
+        {% if mentors %}
+            {% for mentor in mentors %}
+                <div class="mentor" data-field="{{ (mentor.fullname ~ ' ' ~ (mentor.session_description or ''))|lower }}">
+                    
+                    <h3>{{ mentor.fullname }}</h3>
+                    <p>Graduation Year: {{ mentor.graduation_year }}</p>
+                    <p>About: {{ mentor.session_description }}</p>
+                    <p>Next Session: {{ mentor.session_start_time or "TBD" }}</p>
+                    <button class="book-btn" data-session-id="{{ mentor.session_id }}">Book Session</button>
+                </div>
+            {% endfor %}
+        {% else %}
+            <p style="text-align: center;">No mentors available at the moment.</p>
+        {% endif %}
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Live search filter
+            document.getElementById("searchInput").addEventListener("input", filterMentors);
+
+            // Book session logic
+            document.querySelectorAll('.book-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    const sessionId = button.dataset.sessionId;
+
+                    fetch('/book_session', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ session_id: sessionId })
+                    })
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert("Session booked!");
+                            button.disabled = true;
+                            button.textContent = "Booked";
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        alert("Error booking session.");
+                    });
+                });
+            });
+        });
+
+        function filterMentors() {
+            const input = document.getElementById("searchInput").value.toLowerCase();
+            const mentorCards = document.querySelectorAll(".mentor");
+
+            mentorCards.forEach(card => {
+                const text = card.innerText.toLowerCase();
+                card.style.display = text.includes(input) ? "block" : "none";
+            });
+        }
+    </script>
+    
+</body>
+</html>

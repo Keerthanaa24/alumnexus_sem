@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alumni Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        }
+        
+        body {
+            display: flex;
+            background-color: #f5f0ff;
+            color: #1a1a1a;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar with your background image */
+        .sidebar {
+            width: 250px;
+            background: url('static/images/dashboard-bg.png') no-repeat center center;
+            background-size: cover;
+            height: 100vh;
+            padding: 30px 20px;
+            position: fixed;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-right: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+        
+        /* Sidebar Buttons - Original Size */
+        .sidebar button {
+            width: 100%;
+            background-color: rgba(41, 128, 185, 0.8);
+            color: white;
+            border: none;
+            padding: 14px;
+            margin: 12px 0;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+        }
+        
+        .sidebar button:hover {
+            background-color: rgba(28, 89, 128, 0.9);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        /* Dashboard Layout */
+        .dashboard {
+            background: transparent;
+            margin-left: 250px;
+            padding: 30px;
+            width: calc(100% - 250px);
+        }
+        
+        /* Header */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 18px 25px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+        }
+        
+        header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1e293b;
+        }
+        
+        /* Notification Button */
+        #notifyBtn {
+            background-color: white;
+            color: #4b5563;
+            border: 1px solid #e5e7eb;
+            padding: 10px 14px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.3s ease;
+        }
+        
+        #notifyBtn:hover {
+            background-color: #f9fafb;
+            transform: scale(1.1);
+        }
+        
+        /* Grid Layout for Sections */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 25px;
+        }
+        
+        @media (min-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: 2fr 1fr;
+            }
+        }
+        
+        /* Feed, Quick Actions, and Suggestions - Modern Cards */
+        .feed, .quick-actions, .suggestions {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .feed:hover, .suggestions:hover {
+            transform: translateY(-5px);
+            box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        h2 {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: #1e293b;
+            font-weight: 600;
+            position: relative;
+            padding-bottom: 8px;
+        }
+        
+        h2::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: hsl(204, 64%, 44%);
+            border-radius: 3px;
+        }
+        
+        /* Feed List */
+        .feed ul, .suggestions ul {
+            list-style-type: none;
+        }
+        
+        .feed ul li {
+            background: #f8fafc;
+            padding: 14px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            font-size: 15px;
+            color: #334155;
+            transition: all 0.3s ease;
+            border-left: 3px solid #2980b9;
+        }
+        
+        .feed ul li:hover {
+            background: #f1f5f9;
+            transform: translateX(5px);
+        }
+        
+        /* Quick Actions - Card Style with Hover Descriptions */
+        .quick-actions {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 25px;
+        }
+        
+        .quick-action-card {
+            background-color: white;
+            color: #2980b9;
+            border: 1px solid #e2e8f0;
+            padding: 25px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            height: 150px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .quick-action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            color: #1c5980;
+            border-color: #93c5fd;
+        }
+        
+        .quick-action-card .action-title {
+            margin-bottom: 10px;
+        }
+        
+        .quick-action-card .action-description {
+            font-size: 14px;
+            font-weight: 400;
+            color: #64748b;
+            opacity: 0;
+            max-height: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .quick-action-card:hover .action-description {
+            opacity: 1;
+            max-height: 100px;
+        }
+        
+        /* Position View Events button on the right */
+        #createEvent {
+            grid-column: 2;
+            grid-row: 1 / span 2;
+            height: auto;
+        }
+        
+        /* Suggestions List */
+        .suggestions ul li {
+            padding: 12px 0;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 15px;
+            color: #334155;
+        }
+        
+        .suggestions ul li:last-child {
+            border-bottom: none;
+        }
+        
+        /* Empty State Styles */
+        .feed ul:empty::after, 
+        .suggestions ul:empty::after {
+            content: "No items to display";
+            color: #94a3b8;
+            font-style: italic;
+            display: block;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 200px;
+            }
+        
+            .dashboard {
+                margin-left: 200px;
+                width: calc(100% - 200px);
+                padding: 20px;
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+            
+            #createEvent {
+                grid-column: 1;
+                grid-row: auto;
+            }
+        }
+        
+        @media (max-width: 600px) {
+            .sidebar {
+                position: absolute;
+                left: -250px;
+                transition: 0.3s;
+            }
+        
+            .dashboard {
+                margin-left: 0;
+                width: 100%;
+            }
+        }
+        /* Notification Popup Styles */
+        .notification-popup {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            width: 320px;
+            background: linear-gradient(135deg, #61a1da 0%, rgba(41, 128, 185, 0.8) 100%);
+            color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            border: none;
+        }
+        
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background-color: rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .notification-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin: 0;
+        }
+        
+        .notification-close {
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+            transition: transform 0.2s;
+        }
+        
+        .notification-close:hover {
+            transform: scale(1.2);
+        }
+        
+        .notification-body {
+            max-height: 300px;
+            overflow-y: auto;
+            padding: 0;
+        }
+        
+        .notification-item {
+            padding: 12px 16px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: background-color 0.2s;
+        }
+        
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+        
+        .notification-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Scrollbar styling for notification body */
+        .notification-body::-webkit-scrollbar {
+            width: 6px;
+        }
+        
+        .notification-body::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+            border-radius: 3px;
+        }
+        
+        .notification-body::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+        }
+        
+        .notification-body::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.5);
+        }
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+          }
+          
+          .modal-content {
+            position: relative;
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 400px;
+            border-radius: 8px;
+          }
+          
+          .close-modal {
+            position: absolute;
+            right: 15px;
+            top: 10px;
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            z-index: 1; /* Ensure it's above other content */
+        }
+        
+        .close-modal:hover {
+            color: black;
+        }
+        </style>
+</head>
+<body class="dashboard-page">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <a href="{{ url_for('dashboard') }}"><button>Dashboard</button></a>
+        <a href="{{ url_for('profile') }}"><button>Profile</button></a>
+        <a href="{{ url_for('mentorship') }}"><button>Mentorship Hub</button></a>
+        <a href="{{ url_for('job') }}"><button>Jobs</button></a>
+        <a href="{{ url_for('donations') }}"><button>Donations</button></a>
+        <a href="{{ url_for('dashfeed') }}"><button>Feedback</button></a>
+        <a href="{{ url_for('admin') }}" id="adminDashboardLink"><button>Admin Dashboard</button></a>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="dashboard">
+        <header>
+            <h1>Welcome to Alumnexus!! 👨‍🎓🎓</h1>
+            <button id="notifyBtn">🔔</button>
+        </header>
+
+        <div class="dashboard-grid">
+            <!-- Left Column -->
+            <div class="left-column">
+                <!-- Personalized Feed -->
+                <section class="feed">
+                    <h2>Recent Activities</h2>
+                    <ul>
+                        {% if recent_activities %}
+                            {% for activity in recent_activities %}
+                                <li>{{ activity.message }} - {{ activity.created_at }}</li>
+                            {% endfor %}
+                        {% else %}
+                            <li>No recent activities</li>
+                        {% endif %}
+                    </ul>
+                </section>
+
+                <!-- Quick Actions -->
+                <section class="quick-actions">
+                    <div class="quick-action-card" id="connectAlumni">
+                        <div class="action-title">Connect with Alumni 👥🤝🔗 </div>
+                        <div class="action-description">Find and connect with alumni in your field</div>
+                    </div>
+                    
+                    <div class="quick-action-card" id="successStoriesBtn">
+                        <div class="action-title">Success Stories 📈🏆</div>
+                        <div class="action-description">Read inspiring stories from successful alumni</div>
+                    </div>
+                    
+                    <div class="quick-action-card" id="createEvent">
+                        <div class="action-title">View Events 🗓️📌</div>
+                        <div class="action-description">Browse and join upcoming alumni events</div>
+                    </div>
+                </section>
+            </div>
+
+            <!-- Right Column -->
+            <div class="right-column">
+               <!-- Suggestions Panel -->
+<section class="suggestions">
+    <h2>Suggested Connections</h2>
+    {% if suggested_connections %}
+        <ul>
+            {% for user in suggested_connections %}
+                <li>
+                    {{ user.fullname }}
+                    {% if user.current_job %} - {{ user.current_job }}{% endif %}
+                    {% if user.company %} at {{ user.company }}{% endif %}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <div class="debug-info">
+            <p>No suggested connections available. Possible reasons:</p>
+            <ul>
+                <li>No other alumni in database</li>
+                <li>Alumni haven't completed profiles</li>
+                <li>All alumni have private profiles</li>
+                <li>Database connection issue</li>
+            </ul>
+            <p>Check console for more details.</p>
+        </div>
+    {% endif %}
+</section>
+            </div>
+        </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='dashboard_script.js') }}"></script>
+<!-- Admin Security Modal -->
+<div id="adminModal" class="modal">
+    <div class="modal-content">
+      <span class="close-modal">&times;</span>
+      <h2>Admin Access</h2>
+      <p>Please enter the security key to access the admin dashboard:</p>
+      <br> </br>
+     
+      <input type="password" id="securityKey" placeholder="Enter security key">
+      <br> </br>
+      <button id="submitKey">Submit</button>
+      <br> </br>
+      <p id="keyError" style="color:red; display:none;">Invalid security key</p>
+    </div>
+  </div>
+</body>
+</html>
